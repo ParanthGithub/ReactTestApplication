@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import './App.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ function App() {
   // Fetch all tasks
   const fetchTasks = async () => {
     try {
-      const response = await fetch('/api/tasks');
+      const response = await fetch(`${API_BASE_URL}/api/tasks`);
       if (!response.ok) throw new Error('Failed to fetch tasks');
       const data = await response.json();
       setTasks(data);
@@ -49,7 +51,7 @@ function App() {
     
     const startTime = Date.now();
     try {
-      const response = await fetch('/api/health');
+      const response = await fetch(`${API_BASE_URL}/api/health`);
       if (!response.ok) throw new Error('Health check response invalid');
       const data = await response.json();
       
@@ -105,7 +107,7 @@ function App() {
     if (!newTaskTitle.trim()) return;
 
     try {
-      const response = await fetch('/api/tasks', {
+      const response = await fetch(`${API_BASE_URL}/api/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -126,7 +128,7 @@ function App() {
   // Toggle Task Completion Status
   const handleToggleTask = async (id, currentCompleted) => {
     try {
-      const response = await fetch(`/api/tasks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tasks/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: !currentCompleted })
@@ -143,7 +145,7 @@ function App() {
   // Delete Task
   const handleDeleteTask = async (id) => {
     try {
-      const response = await fetch(`/api/tasks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tasks/${id}`, {
         method: 'DELETE'
       });
 
@@ -420,7 +422,7 @@ function App() {
       </main>
 
       <footer className="footer-text">
-        Quantum Hub &bull; Powered by React, Express, and Vanilla CSS &bull; Local Environment Mode
+        Quantum Hub &bull; Powered by React, Express, and Vanilla CSS &bull; {import.meta.env.DEV ? 'Local Environment Mode' : 'Production Environment Mode'}
       </footer>
     </div>
   );

@@ -4,7 +4,29 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Setup CORS allowed origins
+const getCorsOrigins = () => {
+  if (process.env.ALLOWED_ORIGINS) {
+    return process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+  }
+  return [
+    'http://localhost:5173',
+    'https://gray-flower-016361a10.7.azurestaticapps.net'
+  ];
+};
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    const origins = getCorsOrigins();
+    if (origins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // In-memory Task Database
